@@ -1,0 +1,25 @@
+//Projecting the behaviour definition
+projection;
+// If use draft is commented here then the editing status drop down on the screen (which
+// is for draft) will not appear, Hence draft functionality will not be activated.
+use draft;
+
+define behavior for ZST7_ACCHDR_ROOTPOOL_CONSM_DFT alias AccountingHeader
+//use etag
+{
+  use create;
+  use update;
+  use delete;
+
+  use association _items { create; with draft; }
+//  use association _items;
+}
+
+define behavior for ZST7_ACCITM_CHLDPOOL_CONSM_DFT alias AccountingItems
+{
+  use update;
+  use delete;
+
+  use association _header { with draft; }
+//  use association _header;
+}

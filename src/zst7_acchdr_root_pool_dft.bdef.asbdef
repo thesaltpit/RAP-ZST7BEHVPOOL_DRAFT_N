@@ -1,0 +1,48 @@
+//Behaviour definition
+managed implementation in class zst7_zbp_acchdr_root_pool_dft unique;
+
+with draft;
+
+define behavior for ZST7_ACCHDR_ROOT_POOL_DFT alias AccountingHeader
+persistent table zst7acchdr_dfttb
+draft table zst7acchdr_dftb
+lock master
+total etag changeddt_time
+authorization master ( instance )
+etag master lastchngdttm
+{
+  // Asking the system to generate it's own key in con_uuid, else it will always be 0000000 by default
+  // else we have to write our own logic to generate the UUID
+  field ( numbering : managed, readonly ) con_uuid;
+  // Marking all the fields as readonly as shown  below will make these fields as
+  // display only on the screen
+  field ( readonly ) bukrs, belnr, gjahr;
+  create;
+  update;
+  delete;
+
+// We use determination to generate and set some default values
+  determination generatedocnum on modify { create; field belnr;}
+  association _items { create; with draft; }
+    //  association _items { create; }
+}
+
+define behavior for ZST7_ACCITM_CHILD_POOL_DFT alias AccountingItems
+persistent table zst7accitm_dfttb
+draft table zst7accitm_dftb
+lock dependent by _header
+authorization dependent by _header
+etag master local_chg_dt_time
+{
+  field ( readonly ) con_uuid;
+  field ( numbering : managed, readonly ) item_uuid;
+  update;
+  delete;
+  // Marking all the fields as readonly as shown  below will make these fields as
+  // display only on the screen
+  field ( readonly ) bukrs, belnr, gjahr;
+
+  association _header { with draft; }
+   //  association _header;
+
+ }
